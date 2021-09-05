@@ -1,6 +1,8 @@
 
+import XWordRenderSvc from "../service/XWordRenderSvc";
+
 const Handler = async (event) => {
-  console.log(event);
+  await XWordRenderSvc()
   return { "good": "job" };
 }
 

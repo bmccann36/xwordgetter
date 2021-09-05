@@ -1,0 +1,24 @@
+const myObj = {
+    answers: "0",
+    boxVal: "",
+    checkPDF: "false",
+    chessView: "0",
+    clueFontSizeStep: "0",
+    cluesAndAnswersText: "0",
+    emptyBoxOpacity: "NaN",
+    encodedBoxState: "",
+    gridOnly: "0",
+    hideClueColumns: "false",
+    id: "e952fc80",
+    isPreview: "false",
+    locale: "en-US",
+    print: "1",
+    printType: "print-puzzle",
+    puzzleType: "crossword",
+    rtlGrid: "false",
+    rtlInterface: "false",
+    set: "tny-weekly",
+    theme: "tny"
+};
+console.log(JSON.stringify(myObj));
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic2NyYXRjaC5qcyIsInNvdXJjZVJvb3QiOiIvIiwic291cmNlcyI6WyJzY3JhdGNoLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBLE1BQU0sS0FBSyxHQUFHO0lBQ1osT0FBTyxFQUFFLEdBQUc7SUFDWixNQUFNLEVBQUUsRUFBRTtJQUNWLFFBQVEsRUFBRSxPQUFPO0lBQ2pCLFNBQVMsRUFBRSxHQUFHO0lBQ2QsZ0JBQWdCLEVBQUUsR0FBRztJQUNyQixtQkFBbUIsRUFBRSxHQUFHO0lBQ3hCLGVBQWUsRUFBRSxLQUFLO0lBQ3RCLGVBQWUsRUFBRSxFQUFFO0lBQ25CLFFBQVEsRUFBRSxHQUFHO0lBQ2IsZUFBZSxFQUFFLE9BQU87SUFDeEIsRUFBRSxFQUFFLFVBQVU7SUFDZCxTQUFTLEVBQUUsT0FBTztJQUNsQixNQUFNLEVBQUUsT0FBTztJQUNmLEtBQUssRUFBRSxHQUFHO0lBQ1YsU0FBUyxFQUFFLGNBQWM7SUFDekIsVUFBVSxFQUFFLFdBQVc7SUFDdkIsT0FBTyxFQUFFLE9BQU87SUFDaEIsWUFBWSxFQUFFLE9BQU87SUFDckIsR0FBRyxFQUFFLFlBQVk7SUFDakIsS0FBSyxFQUFFLEtBQUs7Q0FDYixDQUFBO0FBRUQsT0FBTyxDQUFDLEdBQUcsQ0FBQyxJQUFJLENBQUMsU0FBUyxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyJjb25zdCBteU9iaiA9IHtcbiAgYW5zd2VyczogXCIwXCIsXG4gIGJveFZhbDogXCJcIixcbiAgY2hlY2tQREY6IFwiZmFsc2VcIixcbiAgY2hlc3NWaWV3OiBcIjBcIixcbiAgY2x1ZUZvbnRTaXplU3RlcDogXCIwXCIsXG4gIGNsdWVzQW5kQW5zd2Vyc1RleHQ6IFwiMFwiLFxuICBlbXB0eUJveE9wYWNpdHk6IFwiTmFOXCIsXG4gIGVuY29kZWRCb3hTdGF0ZTogXCJcIixcbiAgZ3JpZE9ubHk6IFwiMFwiLFxuICBoaWRlQ2x1ZUNvbHVtbnM6IFwiZmFsc2VcIixcbiAgaWQ6IFwiZTk1MmZjODBcIixcbiAgaXNQcmV2aWV3OiBcImZhbHNlXCIsXG4gIGxvY2FsZTogXCJlbi1VU1wiLFxuICBwcmludDogXCIxXCIsXG4gIHByaW50VHlwZTogXCJwcmludC1wdXp6bGVcIixcbiAgcHV6emxlVHlwZTogXCJjcm9zc3dvcmRcIixcbiAgcnRsR3JpZDogXCJmYWxzZVwiLFxuICBydGxJbnRlcmZhY2U6IFwiZmFsc2VcIixcbiAgc2V0OiBcInRueS13ZWVrbHlcIixcbiAgdGhlbWU6IFwidG55XCJcbn1cblxuY29uc29sZS5sb2coSlNPTi5zdHJpbmdpZnkobXlPYmopKTsiXX0=

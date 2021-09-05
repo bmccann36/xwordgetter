@@ -1,11 +1,14 @@
-import { XWordApiQsModel } from './../model/XWordApiQsModel';
-import cheerio from 'cheerio'; 
+import cheerio from 'cheerio';
+import { XWordApiQsModel } from './model/XWordApiQsModel';
 import querystring from 'querystring';
 const chromium = require('chrome-aws-lambda');
+import S3 from 'aws-sdk/clients/s3'
+const s3 = new S3()
 
+export { Handler }
 
+const Handler = async (event) => {
 
-export default async () => {
   const todayDate = new Date()
 
   const BASE_URL = 'https://www.newyorker.com/puzzles-and-games-dept/crossword/';
@@ -16,7 +19,14 @@ export default async () => {
   const fullUrl = BASE_URL + dateWithSlash;
   console.log('will load URL ', fullUrl);
 
-  const browser = await chromium.puppeteer.launch();
+  const browser = await chromium.puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath,
+    headless: true,
+    ignoreHTTPSErrors: true,
+  });
+
   const page = await browser.newPage();
   // await page.goto(fullUrl); //! this is where end of URL is set dynamically
   await page.goto(BASE_URL + '2021/09/03');
@@ -73,9 +83,9 @@ export default async () => {
 
   await pdfPage.setViewport({ width: 1300, height: 1500 });
 
-  await pdfPage.pdf({
+  const pdfBuff = await pdfPage.pdf({
     printBackground: true,
-    path: "webpage.pdf",
+    // path: "webpage.pdf",
     format: "letter",
     margin: {
       top: "20px",
@@ -84,12 +94,25 @@ export default async () => {
       right: "20px"
     }
   });
+
+// TODO make this less janky
+
+  const putRes = await s3.putObject( {
+    Bucket: 'layers-bucket-brian',
+    Key: "filename.pdf",
+    Body: pdfBuff
+  }).promise()
+
+  console.log(putRes);
+
+
+
   await pdfPage.close();
 
   // Close the browser - done! 
   await browser.close();
-}
 
+};
 
 function getDefaultSearchParams(): XWordApiQsModel {
   return {
@@ -115,3 +138,6 @@ function getDefaultSearchParams(): XWordApiQsModel {
     theme: "tny"
   }
 }
+
+
+

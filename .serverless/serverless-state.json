@@ -6,8 +6,15 @@
     },
     "provider": {
       "name": "aws",
-      "runtime": "nodejs14.x",
+      "runtime": "nodejs12.x",
       "lambdaHashingVersion": "20201221",
+      "ecr": {
+        "images": {
+          "appimage": {
+            "path": "./"
+          }
+        }
+      },
       "stage": "dev",
       "region": "us-east-1",
       "versionFunctions": true,
@@ -174,13 +181,9 @@
             "Type": "AWS::Lambda::Function",
             "Properties": {
               "Code": {
-                "S3Bucket": {
-                  "Ref": "ServerlessDeploymentBucket"
-                },
-                "S3Key": "serverless/x-word-getter/dev/1630787880862-2021-09-04T20:38:00.862Z/PuzzleToS3Cron.zip"
+                "ImageUri": "466357709346.dkr.ecr.us-east-1.amazonaws.com/serverless-x-word-getter-dev@sha256:b85a5e3f249f4251279a1ca22bc98dd02a4c7c5edd981a36f698acd50921872b"
               },
-              "Handler": "src/handler/PuzzleToS3Cron.Handler",
-              "Runtime": "nodejs14.x",
+              "PackageType": "Image",
               "FunctionName": "x-word-getter-dev-PuzzleToS3Cron",
               "MemorySize": 1024,
               "Timeout": 90,
@@ -200,14 +203,14 @@
               "PuzzleToS3CronLogGroup"
             ]
           },
-          "PuzzleToS3CronLambdaVersionzPLPgvSUoZkd3qMNlVt0FfSZJIPjve8Qc8G4FsL18": {
+          "PuzzleToS3CronLambdaVersionQRhI6O6S3ZZA0Y4QztnGj5eOJQy3zPRMgEsSopsZB8": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "PuzzleToS3CronLambdaFunction"
               },
-              "CodeSha256": "IKk5/lHWluD5e8EkVHYG8kIPQ+6Ko2+CY0i2GlBIiI4="
+              "CodeSha256": "b85a5e3f249f4251279a1ca22bc98dd02a4c7c5edd981a36f698acd50921872b"
             }
           },
           "PuzzleToS3CronEventsRuleSchedule1": {
@@ -260,7 +263,7 @@
           "PuzzleToS3CronLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "PuzzleToS3CronLambdaVersionzPLPgvSUoZkd3qMNlVt0FfSZJIPjve8Qc8G4FsL18"
+              "Ref": "PuzzleToS3CronLambdaVersionQRhI6O6S3ZZA0Y4QztnGj5eOJQy3zPRMgEsSopsZB8"
             },
             "Export": {
               "Name": "sls-x-word-getter-dev-PuzzleToS3CronLambdaFunctionQualifiedArn"
@@ -353,13 +356,14 @@
       "vpc": {}
     },
     "plugins": [
-      "serverless-dotenv-plugin",
-      "serverless-webpack"
+      "serverless-dotenv-plugin"
     ],
     "pluginsData": {},
     "functions": {
       "PuzzleToS3Cron": {
-        "handler": "src/handler/PuzzleToS3Cron.Handler",
+        "image": {
+          "name": "appimage"
+        },
         "events": [
           {
             "schedule": "cron(30 6 ? * MON,WED,FRI *)"
@@ -367,13 +371,10 @@
         ],
         "timeout": 90,
         "name": "x-word-getter-dev-PuzzleToS3Cron",
-        "package": {
-          "artifact": ".serverless/PuzzleToS3Cron.zip"
-        },
+        "package": {},
         "memory": 1024,
-        "runtime": "nodejs14.x",
         "vpc": {},
-        "versionLogicalId": "PuzzleToS3CronLambdaVersionzPLPgvSUoZkd3qMNlVt0FfSZJIPjve8Qc8G4FsL18"
+        "versionLogicalId": "PuzzleToS3CronLambdaVersionQRhI6O6S3ZZA0Y4QztnGj5eOJQy3zPRMgEsSopsZB8"
       }
     },
     "configValidationMode": "warn",
@@ -385,10 +386,6 @@
       "useDotenv": true,
       "plugins": {
         "$ref": "$[\"service\"][\"plugins\"]"
-      },
-      "package": {
-        "individually": true,
-        "artifactDirectoryName": "serverless/x-word-getter/dev/1630787880862-2021-09-04T20:38:00.862Z"
       },
       "frameworkVersion": "2",
       "provider": {
@@ -402,8 +399,7 @@
     "isDashboardMonitoringPreconfigured": false
   },
   "package": {
-    "individually": true,
-    "artifactDirectoryName": "serverless/x-word-getter/dev/1630787880862-2021-09-04T20:38:00.862Z",
+    "artifactDirectoryName": "serverless/x-word-getter/dev/1630872721623-2021-09-05T20:12:01.623Z",
     "artifact": ""
   }
 }
