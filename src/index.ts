@@ -1,3 +1,4 @@
+
 import cheerio from 'cheerio';
 import { XWordApiQsModel } from './model/XWordApiQsModel';
 import querystring from 'querystring';
@@ -7,16 +8,22 @@ const s3 = new S3()
 
 export { Handler }
 
-const Handler = async (event) => {
+const PUZZLE_DATE_OVERRIDE = process.env.PUZZLE_DATE_OVERRIDE;
 
-  const todayDate = new Date()
+const Handler = async (event) => {
 
   const BASE_URL = 'https://www.newyorker.com/puzzles-and-games-dept/crossword/';
 
-  const dateWithDash = todayDate.toISOString().split('T')[0];
-  const dateWithSlash = dateWithDash.split('-').join('/')
+  let dateForUrl;
+  if (PUZZLE_DATE_OVERRIDE) {
+    dateForUrl = PUZZLE_DATE_OVERRIDE;
+  } else {
+    const todayDate = new Date()
+    const dateWithDash = todayDate.toISOString().split('T')[0];
+    dateForUrl = dateWithDash.split('-').join('/')
+  }
 
-  const fullUrl = BASE_URL + dateWithSlash;
+  const fullUrl = BASE_URL + dateForUrl;
   console.log('will load URL ', fullUrl);
 
   const browser = await chromium.puppeteer.launch({
@@ -28,8 +35,7 @@ const Handler = async (event) => {
   });
 
   const page = await browser.newPage();
-  // await page.goto(fullUrl); //! this is where end of URL is set dynamically
-  await page.goto(BASE_URL + '2021/09/03');
+  await page.goto(fullUrl); //! this is where end of URL is set dynamically
 
   const headInnerHtml = await page.evaluate(() => document.head.innerHTML);
   const $ = cheerio.load(headInnerHtml);
@@ -95,17 +101,13 @@ const Handler = async (event) => {
     }
   });
 
-// TODO make this less janky
-
-  const putRes = await s3.putObject( {
-    Bucket: 'layers-bucket-brian',
-    Key: "filename.pdf",
+  const putRes = await s3.putObject({
+    Bucket: 'puzzle-pdf-bucket',
+    Key: `puzzle-${new Date().toISOString()}.pdf`,
     Body: pdfBuff
   }).promise()
 
-  console.log(putRes);
-
-
+  console.log('s3 put response ', putRes);
 
   await pdfPage.close();
 

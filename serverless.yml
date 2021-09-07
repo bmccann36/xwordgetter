@@ -17,13 +17,34 @@ provider:
       appimage:
         path: ./
 
+  iam:
+    role:
+      name: custom-role-name
+      statements:
+        - Effect: 'Allow'
+          Resource: 'arn:aws:s3:::puzzle-pdf-bucket/*'
+          Action: 's3:PutObject'
+
 functions:
   PuzzleToS3Cron:
+    memorySize: 2048
     image:
       name: appimage
-    # handler: dist/handler/PuzzleToS3Cron.Handler
     events:
       - schedule: cron(30 6 ? * MON,WED,FRI *)
     timeout: 90 # in seconds
+  TestFunc:
+    image:
+      name: appimage
+      command:
+        - dist/handler2.Handler
 
 
+# The "Resources" your "Functions" use.  Raw AWS CloudFormation goes in here.
+resources:
+  Resources:
+    puzzlePdfBucket:
+      Type: 'AWS::S3::Bucket'
+      DeletionPolicy: Retain
+      Properties:
+        BucketName: puzzle-pdf-bucket
