@@ -4,6 +4,7 @@ import { XWordApiQsModel } from './model/XWordApiQsModel';
 import querystring from 'querystring';
 const chromium = require('chrome-aws-lambda');
 import S3 from 'aws-sdk/clients/s3'
+import { Browser } from 'puppeteer';
 const s3 = new S3()
 
 export { Handler }
@@ -16,6 +17,7 @@ const Handler = async (event) => {
 
   let dateForUrl;
   if (PUZZLE_DATE_OVERRIDE) {
+    console.warn('overriding puzzle date to: ', PUZZLE_DATE_OVERRIDE)
     dateForUrl = PUZZLE_DATE_OVERRIDE;
   } else {
     const todayDate = new Date()
@@ -33,7 +35,27 @@ const Handler = async (event) => {
     headless: true,
     ignoreHTTPSErrors: true,
   });
+  //* LOAD INTERACTIVE PUZZLE PAGE TO SCRAPE THE PUZZLE ID
+  const puzId = await getPuzzleId(browser, fullUrl);
+  console.log('puzzle Id :>> ', puzId);
+  //* LOAD NEXT PAGE AND GET PDF AS BUFFER
+  const pdfBuff = await getPdfBuffer(browser, puzId)
 
+  //* UPLOAD TO S3
+  const putRes = await s3.putObject({
+    Bucket: 'puzzle-pdf-bucket',
+    Key: `puzzle-${new Date().toISOString()}.pdf`,
+    Body: pdfBuff
+  }).promise()
+
+  console.log('s3 put response ', putRes);
+
+  // Close the browser - done! 
+  await browser.close();
+
+};
+
+async function getPuzzleId(browser: Browser, fullUrl: string): Promise<string> {
   const page = await browser.newPage();
   await page.goto(fullUrl); //! this is where end of URL is set dynamically
 
@@ -54,11 +76,10 @@ const Handler = async (event) => {
   const queryParamsOnly = urlOnly.split('?')[1];
   // parse the search params
   let params = new URLSearchParams(queryParamsOnly);
-  const puzId = params.get("id");
-  console.log('puzzle ID: ', puzId);
+  return params.get("id");
+}
 
-  //* LOAD NEXT PAGE
-
+async function getPdfBuffer(browser: Browser, puzId: string): Promise<Buffer> {
   const qryModel: XWordApiQsModel = getDefaultSearchParams();
   qryModel.id = puzId //! this is were ID is set
   const qs = querystring.stringify(qryModel);
@@ -100,21 +121,9 @@ const Handler = async (event) => {
       right: "20px"
     }
   });
-
-  const putRes = await s3.putObject({
-    Bucket: 'puzzle-pdf-bucket',
-    Key: `puzzle-${new Date().toISOString()}.pdf`,
-    Body: pdfBuff
-  }).promise()
-
-  console.log('s3 put response ', putRes);
-
   await pdfPage.close();
-
-  // Close the browser - done! 
-  await browser.close();
-
-};
+  return pdfBuff;
+}
 
 function getDefaultSearchParams(): XWordApiQsModel {
   return {

@@ -1,6 +1,4 @@
 FROM amazon/aws-lambda-nodejs:12
-# Alternatively, you can pull the base image from Docker Hub: amazon/aws-lambda-nodejs:12
-RUN npm install -g typescript
 
 # Install Chrome to get all of the dependencies installed
 RUN yum install -y amazon-linux-extras
@@ -11,10 +9,10 @@ COPY  tsconfig.json package*.json  ${LAMBDA_TASK_ROOT}
 
 # Install NPM dependencies for function
 RUN npm install
-
+# put source code at path where Lambda expects it
 COPY ./src ${LAMBDA_TASK_ROOT}/src
 
-RUN tsc
+RUN npm run build
 
 # Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
 CMD [ "dist/index.Handler" ]  

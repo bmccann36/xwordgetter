@@ -13,6 +13,7 @@
     "aws-sdk": "^2.983.0",
     "cheerio": "^1.0.0-rc.10",
     "chrome-aws-lambda": "^10.1.0",
+    "puppeteer": "^10.2.0",
     "puppeteer-core": "^10.2.0",
     "serverless-dotenv-plugin": "^3.9.0"
   },

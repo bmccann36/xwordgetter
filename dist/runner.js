@@ -1,7 +1,0 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const _1 = require(".");
-// XWordRenderSvc()
-(0, _1.Handler)({});
-// console.log(process.env.TMP_DIR_PATH);
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicnVubmVyLmpzIiwic291cmNlUm9vdCI6Ii8iLCJzb3VyY2VzIjpbInJ1bm5lci50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUVBLHdCQUE0QjtBQUc1QixtQkFBbUI7QUFDbkIsSUFBQSxVQUFPLEVBQUMsRUFBRSxDQUFDLENBQUE7QUFDWCx5Q0FBeUMiLCJzb3VyY2VzQ29udGVudCI6WyJcblxuaW1wb3J0IHsgSGFuZGxlciB9IGZyb20gJy4nO1xuaW1wb3J0IFhXb3JkUmVuZGVyU3ZjIGZyb20gJy4vc2VydmljZS9YV29yZFJlbmRlclN2Yyc7XG5cbi8vIFhXb3JkUmVuZGVyU3ZjKClcbkhhbmRsZXIoe30pXG4vLyBjb25zb2xlLmxvZyhwcm9jZXNzLmVudi5UTVBfRElSX1BBVEgpOyJdfQ==

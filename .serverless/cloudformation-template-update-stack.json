@@ -1,0 +1,308 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "ServerlessDeploymentBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "ServerlessDeploymentBucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "ServerlessDeploymentBucket"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "ServerlessDeploymentBucket"
+                      },
+                      "/*"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "ServerlessDeploymentBucket"
+                      }
+                    ]
+                  ]
+                }
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": false
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "PuzzleToS3CronLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/x-word-getter-dev-PuzzleToS3Cron"
+      }
+    },
+    "TestFuncLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/x-word-getter-dev-TestFunc"
+      }
+    },
+    "IamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "x-word-getter",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/x-word-getter-dev*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/x-word-getter-dev*:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Resource": "arn:aws:s3:::puzzle-pdf-bucket/*",
+                  "Action": [
+                    "s3:PutObject"
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": "custom-role-name"
+      }
+    },
+    "PuzzleToS3CronLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "ImageUri": "466357709346.dkr.ecr.us-east-1.amazonaws.com/serverless-x-word-getter-dev@sha256:a8e9596d299b356edbe7056c3b62d820b826ff11f65b8d9422fe2350585fe7a2"
+        },
+        "PackageType": "Image",
+        "FunctionName": "x-word-getter-dev-PuzzleToS3Cron",
+        "MemorySize": 2048,
+        "Timeout": 90,
+        "Environment": {
+          "Variables": {
+            "PUZZLE_DATE_OVERRIDE": "2021/09/08"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "PuzzleToS3CronLogGroup"
+      ]
+    },
+    "PuzzleToS3CronLambdaVersionSMLpSoOmWX8U26FDU8vYPbOeugvfW40RxjWLsnuNUOY": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "PuzzleToS3CronLambdaFunction"
+        },
+        "CodeSha256": "a8e9596d299b356edbe7056c3b62d820b826ff11f65b8d9422fe2350585fe7a2"
+      }
+    },
+    "TestFuncLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "ImageUri": "466357709346.dkr.ecr.us-east-1.amazonaws.com/serverless-x-word-getter-dev@sha256:a8e9596d299b356edbe7056c3b62d820b826ff11f65b8d9422fe2350585fe7a2"
+        },
+        "ImageConfig": {
+          "Command": [
+            "dist/handler2.Handler"
+          ]
+        },
+        "PackageType": "Image",
+        "FunctionName": "x-word-getter-dev-TestFunc",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "PUZZLE_DATE_OVERRIDE": "2021/09/08"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "TestFuncLogGroup"
+      ]
+    },
+    "TestFuncLambdaVersion1N01xemFil1n9zbujH2JVnd0tJxTfSADWk7c6o269E": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "TestFuncLambdaFunction"
+        },
+        "CodeSha256": "a8e9596d299b356edbe7056c3b62d820b826ff11f65b8d9422fe2350585fe7a2"
+      }
+    },
+    "PuzzleToS3CronEventsRuleSchedule1": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": "cron(30 6 ? * MON,WED,FRI *)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "PuzzleToS3CronLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "PuzzleToS3CronSchedule"
+          }
+        ]
+      }
+    },
+    "PuzzleToS3CronLambdaPermissionEventsRuleSchedule1": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "PuzzleToS3CronLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "PuzzleToS3CronEventsRuleSchedule1",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "puzzlePdfBucket": {
+      "Type": "AWS::S3::Bucket",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "BucketName": "puzzle-pdf-bucket"
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": {
+        "Ref": "ServerlessDeploymentBucket"
+      },
+      "Export": {
+        "Name": "sls-x-word-getter-dev-ServerlessDeploymentBucketName"
+      }
+    },
+    "PuzzleToS3CronLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "PuzzleToS3CronLambdaVersionSMLpSoOmWX8U26FDU8vYPbOeugvfW40RxjWLsnuNUOY"
+      },
+      "Export": {
+        "Name": "sls-x-word-getter-dev-PuzzleToS3CronLambdaFunctionQualifiedArn"
+      }
+    },
+    "TestFuncLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "TestFuncLambdaVersion1N01xemFil1n9zbujH2JVnd0tJxTfSADWk7c6o269E"
+      },
+      "Export": {
+        "Name": "sls-x-word-getter-dev-TestFuncLambdaFunctionQualifiedArn"
+      }
+    }
+  }
+}
