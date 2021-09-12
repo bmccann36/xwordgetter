@@ -1,0 +1,38 @@
+{
+  "Records": [
+      {
+          "eventVersion": "2.1",
+          "eventSource": "aws:s3",
+          "awsRegion": "us-east-1",
+          "eventTime": "2021-09-12T00:11:10.050Z",
+          "eventName": "ObjectCreated:Put",
+          "userIdentity": {
+              "principalId": "AWS:AROAWZFIV5IRHDLJ3TD6H:x-word-getter-dev-PuzzleToS3Cron"
+          },
+          "requestParameters": {
+              "sourceIPAddress": "54.145.187.66"
+          },
+          "responseElements": {
+              "x-amz-request-id": "8Y0QZ3GV6Z5AXVAH",
+              "x-amz-id-2": "3v2pDiDfXgO7K89JiNhoJNg8/KOJ2mnCINAYKBrgZn+qcVNZQNGgmzM7BdEy+Ogo/PNcvMWJ/jx2eoRGNLRZxljb5X4i0i8I"
+          },
+          "s3": {
+              "s3SchemaVersion": "1.0",
+              "configurationId": "x-word-getter-dev-S3toRemarkable-68a737133cefb25bff959852b8f04754",
+              "bucket": {
+                  "name": "puzzle-pdf-bucket",
+                  "ownerIdentity": {
+                      "principalId": "A13P62PZS1VZW7"
+                  },
+                  "arn": "arn:aws:s3:::puzzle-pdf-bucket"
+              },
+              "object": {
+                  "key": "puzzle-2021-09-12T00%3A11%3A11.100Z.pdf",
+                  "size": 28163,
+                  "eTag": "2d41d926f241bf29443dab48d74b2e18",
+                  "sequencer": "00613D459F29C2E260"
+              }
+          }
+      }
+  ]
+}

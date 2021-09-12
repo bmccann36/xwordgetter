@@ -1,15 +1,16 @@
-
 service: x-word-getter
+package:
+  individually: true
 useDotenv: true
 plugins:
   - serverless-dotenv-plugin
 
-frameworkVersion: '2'
+frameworkVersion: "2"
 
 provider:
   name: aws
   runtime: nodejs12.x
-  lambdaHashingVersion: '20201221'
+  lambdaHashingVersion: "20201221"
 
   ecr:
     # In this section you can define images that will be built locally and uploaded to ECR
@@ -19,11 +20,14 @@ provider:
 
   iam:
     role:
-      name: custom-role-name
+      name: rmxword-bucket-role
       statements:
-        - Effect: 'Allow'
-          Resource: 'arn:aws:s3:::puzzle-pdf-bucket/*'
-          Action: 's3:PutObject'
+        - Effect: "Allow"
+          Resource: "arn:aws:s3:::puzzle-pdf-bucket/*"
+          Action:
+            - s3:ListObject
+            - s3:ListBucket
+            - s3:GetObject
 
 functions:
   PuzzleToS3Cron:
@@ -33,18 +37,31 @@ functions:
     events:
       - schedule: cron(30 6 ? * MON,WED,FRI *)
     timeout: 90 # in seconds
-  TestFunc:
-    image:
-      name: appimage
-      command:
-        - dist/handler2.Handler
+
+  S3toRemarkable:
+    handler: ./dist/S3toRemarkableHandler.Handler
+    events:
+      - s3:
+          bucket: puzzle-pdf-bucket
+          event: s3:ObjectCreated:*
+          existing: true
+    package:
+      patterns:
+        - '!node_modules/puppeteer/**'
+        - '!node_modules/puppeteer-core/**'
+
+#! a function for testing out code in the docker image
+  # TestFunc:
+  #   image:
+  #     name: appimage
+  #     command:
+  #       - dist/handler2.Handler
 
 
-# The "Resources" your "Functions" use.  Raw AWS CloudFormation goes in here.
 resources:
   Resources:
     puzzlePdfBucket:
-      Type: 'AWS::S3::Bucket'
+      Type: "AWS::S3::Bucket"
       DeletionPolicy: Retain
       Properties:
         BucketName: puzzle-pdf-bucket

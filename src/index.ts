@@ -42,9 +42,10 @@ const Handler = async (event) => {
   const pdfBuff = await getPdfBuffer(browser, puzId)
 
   //* UPLOAD TO S3
+  const dateNoTime = new Date().toISOString().split('T')[0]
   const putRes = await s3.putObject({
     Bucket: 'puzzle-pdf-bucket',
-    Key: `puzzle-${new Date().toISOString()}.pdf`,
+    Key: `puzzle-${dateNoTime}.pdf`,
     Body: pdfBuff
   }).promise()
 

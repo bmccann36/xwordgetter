@@ -17,13 +17,13 @@
       },
       "iam": {
         "role": {
-          "name": "custom-role-name",
+          "name": "rmxword-bucket-role",
           "statements": [
             {
               "Effect": "Allow",
               "Resource": "arn:aws:s3:::puzzle-pdf-bucket/*",
               "Action": [
-                "s3:PutObject"
+                "s3:*"
               ]
             }
           ]
@@ -33,7 +33,7 @@
       "region": "us-east-1",
       "versionFunctions": true,
       "environment": {
-        "PUZZLE_DATE_OVERRIDE": "2021/09/08"
+        "REMARKABLE_DEVICE_TOKEN": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoMC11c2VyaWQiOiJhdXRoMHw1ZjJkOWVhYmMxM2JkODAwMzdjNWM3YmYiLCJkZXZpY2UtZGVzYyI6ImRlc2t0b3Atd2luZG93cyIsImRldmljZS1pZCI6IjM5MGY5ZGNmLThjNmQtNTAyMS1iYThkLWY2NDM3YTQwNDg5OCIsImlhdCI6MTYzMTM3MzYyNCwiaXNzIjoick0gV2ViQXBwIiwianRpIjoiY2swdC84V3IxZEU9IiwibmJmIjoxNjMxMzczNjI0LCJzdWIiOiJyTSBEZXZpY2UgVG9rZW4ifQ.r6BGqXcr2dD9I4NHr44lRkoEDWb5S879D76D2Bqv8Po"
       },
       "compiledCloudFormationTemplate": {
         "AWSTemplateFormatVersion": "2010-09-09",
@@ -114,10 +114,10 @@
               "LogGroupName": "/aws/lambda/x-word-getter-dev-PuzzleToS3Cron"
             }
           },
-          "TestFuncLogGroup": {
+          "S3toRemarkableLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/x-word-getter-dev-TestFunc"
+              "LogGroupName": "/aws/lambda/x-word-getter-dev-S3toRemarkable"
             }
           },
           "IamRoleLambdaExecution": {
@@ -185,14 +185,54 @@
                 }
               ],
               "Path": "/",
-              "RoleName": "custom-role-name"
+              "RoleName": "rmxword-bucket-role"
+            }
+          },
+          "S3toRemarkableLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/x-word-getter/dev/1631406210937-2021-09-12T00:23:30.937Z/S3toRemarkable.zip"
+              },
+              "Handler": "./dist/S3toRemarkableHandler.Handler",
+              "Runtime": "nodejs12.x",
+              "FunctionName": "x-word-getter-dev-S3toRemarkable",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "REMARKABLE_DEVICE_TOKEN": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoMC11c2VyaWQiOiJhdXRoMHw1ZjJkOWVhYmMxM2JkODAwMzdjNWM3YmYiLCJkZXZpY2UtZGVzYyI6ImRlc2t0b3Atd2luZG93cyIsImRldmljZS1pZCI6IjM5MGY5ZGNmLThjNmQtNTAyMS1iYThkLWY2NDM3YTQwNDg5OCIsImlhdCI6MTYzMTM3MzYyNCwiaXNzIjoick0gV2ViQXBwIiwianRpIjoiY2swdC84V3IxZEU9IiwibmJmIjoxNjMxMzczNjI0LCJzdWIiOiJyTSBEZXZpY2UgVG9rZW4ifQ.r6BGqXcr2dD9I4NHr44lRkoEDWb5S879D76D2Bqv8Po"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "S3toRemarkableLogGroup"
+            ]
+          },
+          "S3toRemarkableLambdaVersionADrh2np1wEaANMuI5xBfFYUZH0d1udOJF7oAPeb6pU": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "S3toRemarkableLambdaFunction"
+              },
+              "CodeSha256": "PRMatv/9RR+hk60KHgdw35gUoSKDPCXfG1Jwj1RtlIg="
             }
           },
           "PuzzleToS3CronLambdaFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
               "Code": {
-                "ImageUri": "466357709346.dkr.ecr.us-east-1.amazonaws.com/serverless-x-word-getter-dev@sha256:a8e9596d299b356edbe7056c3b62d820b826ff11f65b8d9422fe2350585fe7a2"
+                "ImageUri": "466357709346.dkr.ecr.us-east-1.amazonaws.com/serverless-x-word-getter-dev@sha256:9d3b6a2efb0e352b19a3aba2725d733bfbfde8162eeadda263c34ef63afd9ad1"
               },
               "PackageType": "Image",
               "FunctionName": "x-word-getter-dev-PuzzleToS3Cron",
@@ -200,7 +240,7 @@
               "Timeout": 90,
               "Environment": {
                 "Variables": {
-                  "PUZZLE_DATE_OVERRIDE": "2021/09/08"
+                  "REMARKABLE_DEVICE_TOKEN": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoMC11c2VyaWQiOiJhdXRoMHw1ZjJkOWVhYmMxM2JkODAwMzdjNWM3YmYiLCJkZXZpY2UtZGVzYyI6ImRlc2t0b3Atd2luZG93cyIsImRldmljZS1pZCI6IjM5MGY5ZGNmLThjNmQtNTAyMS1iYThkLWY2NDM3YTQwNDg5OCIsImlhdCI6MTYzMTM3MzYyNCwiaXNzIjoick0gV2ViQXBwIiwianRpIjoiY2swdC84V3IxZEU9IiwibmJmIjoxNjMxMzczNjI0LCJzdWIiOiJyTSBEZXZpY2UgVG9rZW4ifQ.r6BGqXcr2dD9I4NHr44lRkoEDWb5S879D76D2Bqv8Po"
                 }
               },
               "Role": {
@@ -214,55 +254,14 @@
               "PuzzleToS3CronLogGroup"
             ]
           },
-          "PuzzleToS3CronLambdaVersionSMLpSoOmWX8U26FDU8vYPbOeugvfW40RxjWLsnuNUOY": {
+          "PuzzleToS3CronLambdaVersionRRmuSw6lGkIOJLn7tnGESv4SgTck93ZfKpRimWeDw": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "PuzzleToS3CronLambdaFunction"
               },
-              "CodeSha256": "a8e9596d299b356edbe7056c3b62d820b826ff11f65b8d9422fe2350585fe7a2"
-            }
-          },
-          "TestFuncLambdaFunction": {
-            "Type": "AWS::Lambda::Function",
-            "Properties": {
-              "Code": {
-                "ImageUri": "466357709346.dkr.ecr.us-east-1.amazonaws.com/serverless-x-word-getter-dev@sha256:a8e9596d299b356edbe7056c3b62d820b826ff11f65b8d9422fe2350585fe7a2"
-              },
-              "ImageConfig": {
-                "Command": [
-                  "dist/handler2.Handler"
-                ]
-              },
-              "PackageType": "Image",
-              "FunctionName": "x-word-getter-dev-TestFunc",
-              "MemorySize": 1024,
-              "Timeout": 6,
-              "Environment": {
-                "Variables": {
-                  "PUZZLE_DATE_OVERRIDE": "2021/09/08"
-                }
-              },
-              "Role": {
-                "Fn::GetAtt": [
-                  "IamRoleLambdaExecution",
-                  "Arn"
-                ]
-              }
-            },
-            "DependsOn": [
-              "TestFuncLogGroup"
-            ]
-          },
-          "TestFuncLambdaVersion1N01xemFil1n9zbujH2JVnd0tJxTfSADWk7c6o269E": {
-            "Type": "AWS::Lambda::Version",
-            "DeletionPolicy": "Retain",
-            "Properties": {
-              "FunctionName": {
-                "Ref": "TestFuncLambdaFunction"
-              },
-              "CodeSha256": "a8e9596d299b356edbe7056c3b62d820b826ff11f65b8d9422fe2350585fe7a2"
+              "CodeSha256": "9d3b6a2efb0e352b19a3aba2725d733bfbfde8162eeadda263c34ef63afd9ad1"
             }
           },
           "PuzzleToS3CronEventsRuleSchedule1": {
@@ -302,6 +301,144 @@
               }
             }
           },
+          "S3toRemarkableCustomS31": {
+            "Type": "Custom::S3",
+            "Version": 1,
+            "DependsOn": [
+              "S3toRemarkableLambdaFunction",
+              "CustomDashresourceDashexistingDashs3LambdaFunction"
+            ],
+            "Properties": {
+              "ServiceToken": {
+                "Fn::GetAtt": [
+                  "CustomDashresourceDashexistingDashs3LambdaFunction",
+                  "Arn"
+                ]
+              },
+              "FunctionName": "x-word-getter-dev-S3toRemarkable",
+              "BucketName": "puzzle-pdf-bucket",
+              "BucketConfigs": [
+                {
+                  "Event": "s3:ObjectCreated:*",
+                  "Rules": []
+                }
+              ]
+            }
+          },
+          "IamRoleCustomResourcesLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "dev",
+                        "x-word-getter",
+                        "custom-resources-lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Resource": {
+                          "Fn::Join": [
+                            ":",
+                            [
+                              "arn",
+                              {
+                                "Ref": "AWS::Partition"
+                              },
+                              "s3",
+                              "",
+                              "",
+                              "puzzle-pdf-bucket"
+                            ]
+                          ]
+                        },
+                        "Action": [
+                          "s3:PutBucketNotification",
+                          "s3:GetBucketNotification"
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Resource": {
+                          "Fn::Join": [
+                            ":",
+                            [
+                              "arn",
+                              {
+                                "Ref": "AWS::Partition"
+                              },
+                              "lambda",
+                              {
+                                "Ref": "AWS::Region"
+                              },
+                              {
+                                "Ref": "AWS::AccountId"
+                              },
+                              "function",
+                              "*"
+                            ]
+                          ]
+                        },
+                        "Action": [
+                          "lambda:AddPermission",
+                          "lambda:RemovePermission"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "CustomDashresourceDashexistingDashs3LambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/x-word-getter/dev/1631406210937-2021-09-12T00:23:30.937Z/custom-resources.zip"
+              },
+              "FunctionName": "x-word-getter-dev-custom-resource-existing-s3",
+              "Handler": "s3/handler.handler",
+              "MemorySize": 1024,
+              "Runtime": "nodejs12.x",
+              "Timeout": 180,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleCustomResourcesLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "IamRoleCustomResourcesLambdaExecution"
+            ]
+          },
           "puzzlePdfBucket": {
             "Type": "AWS::S3::Bucket",
             "DeletionPolicy": "Retain",
@@ -319,22 +456,22 @@
               "Name": "sls-x-word-getter-dev-ServerlessDeploymentBucketName"
             }
           },
+          "S3toRemarkableLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "S3toRemarkableLambdaVersionADrh2np1wEaANMuI5xBfFYUZH0d1udOJF7oAPeb6pU"
+            },
+            "Export": {
+              "Name": "sls-x-word-getter-dev-S3toRemarkableLambdaFunctionQualifiedArn"
+            }
+          },
           "PuzzleToS3CronLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "PuzzleToS3CronLambdaVersionSMLpSoOmWX8U26FDU8vYPbOeugvfW40RxjWLsnuNUOY"
+              "Ref": "PuzzleToS3CronLambdaVersionRRmuSw6lGkIOJLn7tnGESv4SgTck93ZfKpRimWeDw"
             },
             "Export": {
               "Name": "sls-x-word-getter-dev-PuzzleToS3CronLambdaFunctionQualifiedArn"
-            }
-          },
-          "TestFuncLambdaFunctionQualifiedArn": {
-            "Description": "Current Lambda function version",
-            "Value": {
-              "Ref": "TestFuncLambdaVersion1N01xemFil1n9zbujH2JVnd0tJxTfSADWk7c6o269E"
-            },
-            "Export": {
-              "Name": "sls-x-word-getter-dev-TestFuncLambdaFunctionQualifiedArn"
             }
           }
         }
@@ -443,22 +580,32 @@
         "package": {},
         "memory": 2048,
         "vpc": {},
-        "versionLogicalId": "PuzzleToS3CronLambdaVersionSMLpSoOmWX8U26FDU8vYPbOeugvfW40RxjWLsnuNUOY"
+        "versionLogicalId": "PuzzleToS3CronLambdaVersionRRmuSw6lGkIOJLn7tnGESv4SgTck93ZfKpRimWeDw"
       },
-      "TestFunc": {
-        "image": {
-          "name": "appimage",
-          "command": {
-            "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"TestFuncLambdaFunction\"][\"Properties\"][\"ImageConfig\"][\"Command\"]"
+      "S3toRemarkable": {
+        "handler": "./dist/S3toRemarkableHandler.Handler",
+        "events": [
+          {
+            "s3": {
+              "bucket": "puzzle-pdf-bucket",
+              "event": "s3:ObjectCreated:*",
+              "existing": true
+            }
           }
+        ],
+        "package": {
+          "patterns": [
+            "!node_modules/puppeteer/**",
+            "!node_modules/puppeteer-core/**"
+          ],
+          "artifact": "/Users/brianmccann/git-repos/xword-getter/.serverless/S3toRemarkable.zip"
         },
-        "events": [],
-        "name": "x-word-getter-dev-TestFunc",
-        "package": {},
+        "name": "x-word-getter-dev-S3toRemarkable",
         "memory": 1024,
         "timeout": 6,
+        "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "TestFuncLambdaVersion1N01xemFil1n9zbujH2JVnd0tJxTfSADWk7c6o269E"
+        "versionLogicalId": "S3toRemarkableLambdaVersionADrh2np1wEaANMuI5xBfFYUZH0d1udOJF7oAPeb6pU"
       }
     },
     "resources": {
@@ -479,6 +626,10 @@
       "service": {
         "$ref": "$[\"service\"][\"serviceObject\"]"
       },
+      "package": {
+        "individually": true,
+        "artifactDirectoryName": "serverless/x-word-getter/dev/1631406210937-2021-09-12T00:23:30.937Z"
+      },
       "useDotenv": true,
       "plugins": {
         "$ref": "$[\"service\"][\"plugins\"]"
@@ -498,7 +649,8 @@
     "isDashboardMonitoringPreconfigured": false
   },
   "package": {
-    "artifactDirectoryName": "serverless/x-word-getter/dev/1631190704314-2021-09-09T12:31:44.314Z",
+    "individually": true,
+    "artifactDirectoryName": "serverless/x-word-getter/dev/1631406210937-2021-09-12T00:23:30.937Z",
     "artifact": ""
   }
 }
