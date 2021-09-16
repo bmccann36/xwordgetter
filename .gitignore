@@ -4,3 +4,4 @@ dist
 .env
 local.env
 src/scratch.ts
+**/.serverless/*.zip

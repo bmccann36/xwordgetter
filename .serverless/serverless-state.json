@@ -25,7 +25,8 @@
               "Action": [
                 "s3:ListObject",
                 "s3:ListBucket",
-                "s3:GetObject"
+                "s3:GetObject",
+                "s3:PutObject"
               ]
             }
           ]
@@ -34,7 +35,10 @@
       "stage": "dev",
       "region": "us-east-1",
       "versionFunctions": true,
-      "environment": {},
+      "environment": {
+        "REMARKABLE_DEVICE_TOKEN": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoMC11c2VyaWQiOiJhdXRoMHw1ZjJkOWVhYmMxM2JkODAwMzdjNWM3YmYiLCJkZXZpY2UtZGVzYyI6ImRlc2t0b3Atd2luZG93cyIsImRldmljZS1pZCI6IjM5MGY5ZGNmLThjNmQtNTAyMS1iYThkLWY2NDM3YTQwNDg5OCIsImlhdCI6MTYzMTYyMDQ1NCwiaXNzIjoick0gV2ViQXBwIiwianRpIjoiY2swdGs3eTVBdm89IiwibmJmIjoxNjMxNjIwNDU0LCJzdWIiOiJyTSBEZXZpY2UgVG9rZW4ifQ.bBVBTXgoYA9p-zwX4pEWhls6M94SCfhG9t9O7vkAkV8",
+        "PUZZLE_DATE_OVERRIDE": "2021/09/13"
+      },
       "compiledCloudFormationTemplate": {
         "AWSTemplateFormatVersion": "2010-09-09",
         "Description": "The AWS CloudFormation template for this Serverless application",
@@ -195,7 +199,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/x-word-getter/dev/1631585229658-2021-09-14T02:07:09.658Z/S3toRemarkable.zip"
+                "S3Key": "serverless/x-word-getter/dev/1631621417185-2021-09-14T12:10:17.185Z/S3toRemarkable.zip"
               },
               "Handler": "./dist/S3toRemarkableHandler.Handler",
               "Runtime": "nodejs12.x",
@@ -203,7 +207,10 @@
               "MemorySize": 1024,
               "Timeout": 6,
               "Environment": {
-                "Variables": {}
+                "Variables": {
+                  "REMARKABLE_DEVICE_TOKEN": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoMC11c2VyaWQiOiJhdXRoMHw1ZjJkOWVhYmMxM2JkODAwMzdjNWM3YmYiLCJkZXZpY2UtZGVzYyI6ImRlc2t0b3Atd2luZG93cyIsImRldmljZS1pZCI6IjM5MGY5ZGNmLThjNmQtNTAyMS1iYThkLWY2NDM3YTQwNDg5OCIsImlhdCI6MTYzMTYyMDQ1NCwiaXNzIjoick0gV2ViQXBwIiwianRpIjoiY2swdGs3eTVBdm89IiwibmJmIjoxNjMxNjIwNDU0LCJzdWIiOiJyTSBEZXZpY2UgVG9rZW4ifQ.bBVBTXgoYA9p-zwX4pEWhls6M94SCfhG9t9O7vkAkV8",
+                  "PUZZLE_DATE_OVERRIDE": "2021/09/13"
+                }
               },
               "Role": {
                 "Fn::GetAtt": [
@@ -216,28 +223,31 @@
               "S3toRemarkableLogGroup"
             ]
           },
-          "S3toRemarkableLambdaVersionaySCpNRif5UP3ot4kBnTO7dIJUROAL3FzmzmUJaOKI": {
+          "S3toRemarkableLambdaVersionjTM1ugFCKhT3lxweot389I2Bs90Oo4esokKNM9aUE": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "S3toRemarkableLambdaFunction"
               },
-              "CodeSha256": "iLY3HzZj3C6rIEouIoMR2gQfMIWKfzdcctR5EMsmTxs="
+              "CodeSha256": "VGDRbCD7nln00OZPS+fxkcmgX3Lkm0mpgjqmRpRVQL8="
             }
           },
           "PuzzleToS3CronLambdaFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
               "Code": {
-                "ImageUri": "466357709346.dkr.ecr.us-east-1.amazonaws.com/serverless-x-word-getter-dev@sha256:33b87067ed945421517c4992777b3952195b8ae1850acb436f2e47589e205dfb"
+                "ImageUri": "466357709346.dkr.ecr.us-east-1.amazonaws.com/serverless-x-word-getter-dev@sha256:099f9f4e0cacc3f363c14a122b1d17886022079a3ae55d4a5755a5446c8c71bc"
               },
               "PackageType": "Image",
               "FunctionName": "x-word-getter-dev-PuzzleToS3Cron",
               "MemorySize": 2048,
               "Timeout": 90,
               "Environment": {
-                "Variables": {}
+                "Variables": {
+                  "REMARKABLE_DEVICE_TOKEN": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoMC11c2VyaWQiOiJhdXRoMHw1ZjJkOWVhYmMxM2JkODAwMzdjNWM3YmYiLCJkZXZpY2UtZGVzYyI6ImRlc2t0b3Atd2luZG93cyIsImRldmljZS1pZCI6IjM5MGY5ZGNmLThjNmQtNTAyMS1iYThkLWY2NDM3YTQwNDg5OCIsImlhdCI6MTYzMTYyMDQ1NCwiaXNzIjoick0gV2ViQXBwIiwianRpIjoiY2swdGs3eTVBdm89IiwibmJmIjoxNjMxNjIwNDU0LCJzdWIiOiJyTSBEZXZpY2UgVG9rZW4ifQ.bBVBTXgoYA9p-zwX4pEWhls6M94SCfhG9t9O7vkAkV8",
+                  "PUZZLE_DATE_OVERRIDE": "2021/09/13"
+                }
               },
               "Role": {
                 "Fn::GetAtt": [
@@ -250,14 +260,14 @@
               "PuzzleToS3CronLogGroup"
             ]
           },
-          "PuzzleToS3CronLambdaVersion1rqH0fnF3fR5LbKncDsLtH2moQ7Pw1aNScqEUjiDog": {
+          "PuzzleToS3CronLambdaVersionloVNjVeAmXRzUfRdQJEIZFJJv5HMRSXM34zIbLqT4": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "PuzzleToS3CronLambdaFunction"
               },
-              "CodeSha256": "33b87067ed945421517c4992777b3952195b8ae1850acb436f2e47589e205dfb"
+              "CodeSha256": "099f9f4e0cacc3f363c14a122b1d17886022079a3ae55d4a5755a5446c8c71bc"
             }
           },
           "PuzzleToS3CronEventsRuleSchedule1": {
@@ -417,7 +427,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/x-word-getter/dev/1631585229658-2021-09-14T02:07:09.658Z/custom-resources.zip"
+                "S3Key": "serverless/x-word-getter/dev/1631621417185-2021-09-14T12:10:17.185Z/custom-resources.zip"
               },
               "FunctionName": "x-word-getter-dev-custom-resource-existing-s3",
               "Handler": "s3/handler.handler",
@@ -455,7 +465,7 @@
           "S3toRemarkableLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "S3toRemarkableLambdaVersionaySCpNRif5UP3ot4kBnTO7dIJUROAL3FzmzmUJaOKI"
+              "Ref": "S3toRemarkableLambdaVersionjTM1ugFCKhT3lxweot389I2Bs90Oo4esokKNM9aUE"
             },
             "Export": {
               "Name": "sls-x-word-getter-dev-S3toRemarkableLambdaFunctionQualifiedArn"
@@ -464,7 +474,7 @@
           "PuzzleToS3CronLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "PuzzleToS3CronLambdaVersion1rqH0fnF3fR5LbKncDsLtH2moQ7Pw1aNScqEUjiDog"
+              "Ref": "PuzzleToS3CronLambdaVersionloVNjVeAmXRzUfRdQJEIZFJJv5HMRSXM34zIbLqT4"
             },
             "Export": {
               "Name": "sls-x-word-getter-dev-PuzzleToS3CronLambdaFunctionQualifiedArn"
@@ -576,7 +586,7 @@
         "package": {},
         "memory": 2048,
         "vpc": {},
-        "versionLogicalId": "PuzzleToS3CronLambdaVersion1rqH0fnF3fR5LbKncDsLtH2moQ7Pw1aNScqEUjiDog"
+        "versionLogicalId": "PuzzleToS3CronLambdaVersionloVNjVeAmXRzUfRdQJEIZFJJv5HMRSXM34zIbLqT4"
       },
       "S3toRemarkable": {
         "handler": "./dist/S3toRemarkableHandler.Handler",
@@ -601,7 +611,7 @@
         "timeout": 6,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "S3toRemarkableLambdaVersionaySCpNRif5UP3ot4kBnTO7dIJUROAL3FzmzmUJaOKI"
+        "versionLogicalId": "S3toRemarkableLambdaVersionjTM1ugFCKhT3lxweot389I2Bs90Oo4esokKNM9aUE"
       }
     },
     "resources": {
@@ -624,7 +634,7 @@
       },
       "package": {
         "individually": true,
-        "artifactDirectoryName": "serverless/x-word-getter/dev/1631585229658-2021-09-14T02:07:09.658Z"
+        "artifactDirectoryName": "serverless/x-word-getter/dev/1631621417185-2021-09-14T12:10:17.185Z"
       },
       "useDotenv": true,
       "plugins": {
@@ -646,7 +656,7 @@
   },
   "package": {
     "individually": true,
-    "artifactDirectoryName": "serverless/x-word-getter/dev/1631585229658-2021-09-14T02:07:09.658Z",
+    "artifactDirectoryName": "serverless/x-word-getter/dev/1631621417185-2021-09-14T12:10:17.185Z",
     "artifact": ""
   }
 }
