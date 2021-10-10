@@ -5,8 +5,9 @@ import { Handler } from '.';
 import { Handler as s3toRemarkable } from './S3toRemarkableHandler'
 import fs from 'fs';
 
-// docker image handler with puppeteer
-Handler({})
+//? docker image handler with puppeteer
+
+Handler({ puzzleDateOverride: '2021/10/08' })
 
 //? s3 reader function
 // const objCreatedJson = fs.readFileSync(path.join(__dirname, '..', 'mocks/objCreated.json'))

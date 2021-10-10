@@ -1,3 +1,4 @@
+import { GetPuzzleInputParams } from './model/GetPuzzleInputParams';
 
 import cheerio from 'cheerio';
 import { XWordApiQsModel } from './model/XWordApiQsModel';
@@ -5,20 +6,20 @@ import querystring from 'querystring';
 const chromium = require('chrome-aws-lambda');
 import S3 from 'aws-sdk/clients/s3'
 import { Browser } from 'puppeteer';
+import { Handler } from 'aws-lambda';
 const s3 = new S3()
 
 export { Handler }
 
 const PUZZLE_DATE_OVERRIDE = process.env.PUZZLE_DATE_OVERRIDE;
 
-const Handler = async (event) => {
+const Handler = async (event: GetPuzzleInputParams) => {
 
   const BASE_URL = 'https://www.newyorker.com/puzzles-and-games-dept/crossword/';
-
   let dateForUrl;
-  if (PUZZLE_DATE_OVERRIDE) {
-    console.warn('overriding puzzle date to: ', PUZZLE_DATE_OVERRIDE)
-    dateForUrl = PUZZLE_DATE_OVERRIDE;
+  if (event.puzzleDateOverride) {
+    console.warn('overriding puzzle date to: ', event.puzzleDateOverride)
+    dateForUrl = event.puzzleDateOverride;
   } else {
     const todayDate = new Date()
     const dateWithDash = todayDate.toISOString().split('T')[0];
@@ -61,11 +62,13 @@ async function getPuzzleId(browser: Browser, fullUrl: string): Promise<string> {
   await page.goto(fullUrl); //! this is where end of URL is set dynamically
 
   const headInnerHtml = await page.evaluate(() => document.head.innerHTML);
+  console.log(headInnerHtml);
   const $ = cheerio.load(headInnerHtml);
   console.log('closing nyer interactive crossword page');
   await page.close();
   // select the tag
   const pageJsonData = $('script[type="application/ld+json"]')
+  console.log('pageJsonData :>> ', pageJsonData.html());
   // parse the content as json
   const parsedPuzzleData: any = JSON.parse(pageJsonData.html());
   // i.e. [#crossword: https://cdn3.amuselabs.com/tny/crossword?id=e952fc80&set=tny-weekly&embed=1&compact=1&maxCols=2]

@@ -21,7 +21,7 @@
     "uuid-by-string": "^3.0.4"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.71",
+    "@types/aws-lambda": "^8.10.83",
     "@types/cheerio": "^0.22.30",
     "@types/node": "^14.14.25",
     "@types/puppeteer": "^5.4.4",
