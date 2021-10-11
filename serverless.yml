@@ -35,8 +35,8 @@ functions:
     memorySize: 2048
     image:
       name: appimage
-    events:
-      - schedule: cron(30 7 ? * MON,WED,FRI *)
+    events: # (in UTC time)
+      - schedule: cron(15 10 ? * MON,WED,FRI *)
     timeout: 90 # in seconds
 
   S3toRemarkable:
